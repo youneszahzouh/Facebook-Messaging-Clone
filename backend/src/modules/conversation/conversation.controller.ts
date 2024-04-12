@@ -1,15 +1,7 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Query
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { Conversation } from '@prisma/client';
-import { CreateConversationDTO } from './dtos/create.dto';
 import { ConversationService } from './conversation.service';
+import { CreateConversationDTO } from './dtos/create.dto';
 
 @Controller('conversations')
 export class ConversationController {
@@ -34,11 +26,6 @@ export class ConversationController {
   async create(
     @Body() conversation: CreateConversationDTO
   ): Promise<Conversation> {
-    console.log(
-      '%csrcmodulesconversationconversation.controller.ts:25 conversation',
-      'color: #26bfa5;',
-      conversation
-    );
     return this.conversationService.createConversation(conversation);
   }
 
