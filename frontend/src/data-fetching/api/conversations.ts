@@ -54,9 +54,9 @@ export function useGetConversations(
     },
     getNextPageParam: ({ meta }) => {
       const currentPage = meta?.currentPage;
-      const totalPages = meta?.totalPages;
+      const lastPage = meta?.lastPage;
 
-      return currentPage < totalPages ? { page: currentPage + 1 } : undefined;
+      return currentPage < lastPage ? { page: currentPage + 1 } : undefined;
     },
     initialPageParam: options?.initialPageParam ?? 1,
 
@@ -67,10 +67,13 @@ export function useGetConversations(
     fetchNextPage();
   }
 
-
-  console.log('%csrc\data-fetching\api\conversations.ts:71 data', 'color: red;', data);
+  console.log(
+    "%csrcdata-fetchingapiconversations.ts:71 data",
+    "color: green;",
+    data
+  );
   return {
-    data: data?.pages?.flatMap((page) => page) ?? [],
+    data: data?.pages?.flatMap((page) => page.data) ?? [],
     isLoading,
     error,
     isFetching,

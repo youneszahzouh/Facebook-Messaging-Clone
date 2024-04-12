@@ -9,10 +9,12 @@ export interface InfinitePaginatorInfo<T> {
   pages: Array<{
     data: T[];
     meta: {
+      total: number;
+      lastPage: number;
       currentPage: number;
-      totalPages: number;
-      itemsPerPage: number;
-      totalItems: number;
+      perPage: number;
+      prev: number | null;
+      next: number | null;
     };
   }>;
 }
@@ -20,20 +22,24 @@ export interface InfinitePaginatorInfo<T> {
 export interface IQueryResultInfo<T> {
   data: T[];
   meta: {
+    total: number;
+    lastPage: number;
     currentPage: number;
-    totalPages: number;
-    itemsPerPage: number;
-    totalItems: number;
+    perPage: number;
+    prev: number | null;
+    next: number | null;
   };
 }
 
 export interface PaginatorInfo<T> {
   data: T[];
   meta: {
+    total: number;
+    lastPage: number;
     currentPage: number;
-    totalPages: number;
-    itemsPerPage: number;
-    totalItems: number;
+    perPage: number;
+    prev: number | null;
+    next: number | null;
   };
 }
 
