@@ -16,7 +16,19 @@ export interface IConversationQueryOptions extends QueryOptions {
 
 export type TConversation = {
   id: number;
-  content: string;
+  users: Array<{
+    user: {
+      firstName: string;
+      lastName: string;
+      id: number;
+      profilePicture: {
+        mimetype: string;
+        name: string;
+        size: number;
+        url: string;
+      };
+    };
+  }>;
 };
 
 export function useGetConversations(

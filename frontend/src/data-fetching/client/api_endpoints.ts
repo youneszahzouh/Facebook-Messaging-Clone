@@ -1,3 +1,3 @@
 export const API_ENDPOINTS = {
-  CONVERSATIONS: "/api/conversations/byUser/3",
+  CONVERSATIONS: "/api/conversations/byUser/1",
 };

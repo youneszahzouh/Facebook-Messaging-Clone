@@ -16,7 +16,7 @@ const ConversationsListClientSide = ({
   return (
     <div className="flex flex-col">
       <div className="flex-1 flex-grow  flex-wrap flex relative">
-        <div className="font-bold text-center flex-1 flex items-center p-4 flex-col bg-gray-100">
+        <div className="font-bold text-center flex-1 flex items-center p-4 flex-col ">
           <InfiniteListConversations query={conversationsQuery} />
         </div>
       </div>
