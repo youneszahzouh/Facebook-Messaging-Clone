@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Conversation, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { CreateConversationDTO } from './dtos/create.dto';
+import { userSelect } from '../user/user.model';
 
 @Injectable()
 export class ConversationService {
@@ -20,7 +21,9 @@ export class ConversationService {
       select: {
         users: {
           select: {
-            user: true
+            user: {
+              select: userSelect
+            }
           }
         }
       }
