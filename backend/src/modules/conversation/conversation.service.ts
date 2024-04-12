@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Conversation, Prisma } from '@prisma/client';
+import { createPaginator } from 'prisma-pagination';
+import { PaginatedOutputDto } from 'src/nestjs/decorators/api-paginated-response';
 import { PrismaService } from 'src/prisma.service';
-import { CreateConversationDTO } from './dtos/create.dto';
 import { userSelect } from '../user/user.model';
+import { CreateConversationDTO } from './dtos/create.dto';
 
 @Injectable()
 export class ConversationService {
@@ -37,28 +39,40 @@ export class ConversationService {
     });
   }
 
-  async findByUser(userId: number): Promise<any[]> {
-    return this.prisma.conversation.findMany({
-      where: {
-        users: { some: { userId } }
-      },
-      select: {
-        id: true,
-        users: {
-          select: {
-            user: {
-              select: userSelect
+  async findByUser(
+    userId: number,
+    queryParams: {
+      page: number;
+      limit: number;
+    }
+  ): Promise<PaginatedOutputDto<Conversation>> {
+    const paginate = createPaginator({ perPage: queryParams.limit });
+
+    return paginate<Conversation, Prisma.ConversationFindManyArgs>(
+      this.prisma.conversation,
+      {
+        where: {
+          users: { some: { userId } }
+        },
+        select: {
+          id: true,
+          users: {
+            select: {
+              user: {
+                select: userSelect
+              }
+            }
+          },
+          messages: {
+            select: {
+              content: true,
+              id: true
             }
           }
-        },
-        messages: {
-          select: {
-            content: true,
-            id: true
-          }
         }
-      }
-    });
+      },
+      { page: queryParams.page }
+    );
   }
 
   async createConversation(

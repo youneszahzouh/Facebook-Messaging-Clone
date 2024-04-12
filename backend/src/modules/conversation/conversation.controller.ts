@@ -1,7 +1,20 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query
+} from '@nestjs/common';
 import { Conversation } from '@prisma/client';
 import { ConversationService } from './conversation.service';
 import { CreateConversationDTO } from './dtos/create.dto';
+import {
+  ApiPaginatedResponse,
+  PaginatedOutputDto
+} from 'src/nestjs/decorators/api-paginated-response';
+import { GetConversationDTO } from './dtos/get.dto';
 
 @Controller('conversations')
 export class ConversationController {
@@ -18,8 +31,17 @@ export class ConversationController {
   }
 
   @Get('byUser/:id')
-  async findByUser(@Param('id') userId: number): Promise<Conversation[]> {
-    return this.conversationService.findByUser(userId);
+  @ApiPaginatedResponse(GetConversationDTO) // Substitua CategoryDto pelo seu DTO de saída
+  async findByUser(
+    @Param('id') userId: number,
+
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10
+  ): Promise<PaginatedOutputDto<Conversation>> {
+    return this.conversationService.findByUser(userId, {
+      page: page,
+      limit: limit
+    });
   }
 
   @Post()
