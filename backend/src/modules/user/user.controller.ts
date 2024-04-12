@@ -5,11 +5,15 @@ import {
   Get,
   Param,
   Post,
-  Put
+  Put,
+  UploadedFiles,
+  UseInterceptors
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { User } from './user.model';
+import { Prisma, User } from '@prisma/client';
+import { FileUploader } from 'src/nestjs/decorators/file-uploader';
+import { FileDataMapper } from 'src/nestjs/mappers/file-mapper';
 import { CreateUserDTO } from './dtos/create.dto';
+import { UserService } from './user.service';
 import { UpdateUserDTO } from './dtos/update.dto';
 
 @Controller('users')
@@ -27,7 +31,28 @@ export class UserController {
   }
 
   @Post()
-  async create(@Body() user: CreateUserDTO): Promise<User> {
+  @UseInterceptors(
+    FileUploader({
+      uploadFields: [{ name: 'profilePicture' }],
+      acceptedTypes: ['image/png', 'image/jpg', 'image/jpeg']
+    })
+  )
+  async create(
+    @Body() user: CreateUserDTO,
+    @UploadedFiles() files: { profilePicture?: Express.Multer.File }
+  ): Promise<User> {
+    if (files?.profilePicture) {
+      user.profilePicture = FileDataMapper.fromExpressToDomain(
+        files?.profilePicture[0]
+      ) as Prisma.FileCreateNestedOneWithoutUserInput;
+    }
+
+    console.log(
+      '%csrcmodules.controller.ts:45 user.profilePicture',
+      'color: #007acc;',
+      user.profilePicture
+    );
+
     return this.userService.createUser(user);
   }
 

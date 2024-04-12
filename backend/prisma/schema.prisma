@@ -14,7 +14,22 @@ datasource db {
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
-  firstName String
-  lastName  String
+  id             Int      @id @default(autoincrement())
+  firstName      String
+  lastName       String
+  profilePicture File?    @relation(fields: [fileId], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  fileId         Int?
+}
+
+model File {
+  id        Int      @id @default(autoincrement())
+  name      String
+  url       String
+  mimetype  String
+  size      Int
+  createdAt DateTime @default(now())
+
+  User User[]
 }

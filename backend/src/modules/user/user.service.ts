@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
+import { FileModel } from '../file/file.model';
 
 @Injectable()
 export class UserService {
@@ -15,12 +16,21 @@ export class UserService {
   }
 
   async findAll(): Promise<User[]> {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({
+      include: {
+        profilePicture: true
+      }
+    });
   }
 
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
     return this.prisma.user.create({
-      data
+      data: {
+        ...data,
+        profilePicture: {
+          create: { ...(data.profilePicture as FileModel) }
+        }
+      }
     });
   }
 
