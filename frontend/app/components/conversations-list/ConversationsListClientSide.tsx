@@ -13,11 +13,6 @@ const ConversationsListClientSide = ({
 }) => {
   const conversationsQuery = useGetConversations(defaultParams, {});
 
-  console.log(
-    "%cappcomponentsconversations-listConversationsListClientSide.tsx:17 conversationsQuery",
-    "color: #26bfa5;",
-    conversationsQuery
-  );
   return (
     <div className="flex flex-col">
       <div className="flex-1 flex-grow  flex-wrap flex relative">
