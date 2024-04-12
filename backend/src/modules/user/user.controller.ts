@@ -21,7 +21,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<Partial<User>[]> {
     return this.userService.findAll();
   }
 
@@ -46,12 +46,6 @@ export class UserController {
         files?.profilePicture[0]
       ) as Prisma.FileCreateNestedOneWithoutUserInput;
     }
-
-    console.log(
-      '%csrcmodules.controller.ts:45 user.profilePicture',
-      'color: #007acc;',
-      user.profilePicture
-    );
 
     return this.userService.createUser(user);
   }

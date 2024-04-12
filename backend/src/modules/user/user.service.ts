@@ -15,10 +15,21 @@ export class UserService {
     });
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<Partial<User>[]> {
     return this.prisma.user.findMany({
-      include: {
-        profilePicture: true
+      select: {
+        firstName: true,
+        lastName: true,
+        id: true,
+        profilePictureId: false,
+        profilePicture: {
+          select: {
+            mimetype: true,
+            name: true,
+            size: true,
+            url: true
+          }
+        }
       }
     });
   }
