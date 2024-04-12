@@ -4,10 +4,12 @@ import { UserModule } from './modules/user/user.module';
 import { MemoryStoredFile, NestjsFormDataModule } from 'nestjs-form-data';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConversationModule } from './modules/conversation/conversation.module';
+import { MessageModule } from './modules/message/message.module';
 @Module({
   imports: [
     UserModule,
     ConversationModule,
+    MessageModule,
     NestjsFormDataModule.config({ storage: MemoryStoredFile }),
     ServeStaticModule.forRoot({ rootPath: 'uploads', serveRoot: '/uploads' }),
 

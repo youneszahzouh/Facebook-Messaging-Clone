@@ -19,11 +19,18 @@ export class ConversationService {
   async findAll(): Promise<any[]> {
     return this.prisma.conversation.findMany({
       select: {
+        id: true,
         users: {
           select: {
             user: {
               select: userSelect
             }
+          }
+        },
+        messages: {
+          select: {
+            content: true,
+            id: true
           }
         }
       }
