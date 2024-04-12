@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query
+} from '@nestjs/common';
 import { Conversation } from '@prisma/client';
 import { CreateConversationDTO } from './dtos/create.dto';
 import { ConversationService } from './conversation.service';
@@ -15,6 +23,11 @@ export class ConversationController {
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Conversation> {
     return this.conversationService.findOne({ id });
+  }
+
+  @Get('byUser/:id')
+  async findByUser(@Param('id') userId: number): Promise<Conversation[]> {
+    return this.conversationService.findByUser(userId);
   }
 
   @Post()

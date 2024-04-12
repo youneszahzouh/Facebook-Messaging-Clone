@@ -37,6 +37,30 @@ export class ConversationService {
     });
   }
 
+  async findByUser(userId: number): Promise<any[]> {
+    return this.prisma.conversation.findMany({
+      where: {
+        users: { some: { userId } }
+      },
+      select: {
+        id: true,
+        users: {
+          select: {
+            user: {
+              select: userSelect
+            }
+          }
+        },
+        messages: {
+          select: {
+            content: true,
+            id: true
+          }
+        }
+      }
+    });
+  }
+
   async createConversation(
     conversation: CreateConversationDTO
   ): Promise<Conversation> {
