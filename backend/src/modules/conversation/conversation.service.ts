@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Conversation, Prisma } from '@prisma/client';
 import { createPaginator } from 'prisma-pagination';
 import { PaginatedOutputDto } from 'src/nestjs/decorators/api-paginated-response';
@@ -18,7 +18,6 @@ export class ConversationService {
   ): Promise<Conversation | null> {
     return this.prisma.conversation.findUnique({
       where: conversationWhereUniqueInput,
-
       select: selectConversation
     });
   }
@@ -46,25 +45,48 @@ export class ConversationService {
   }
 
   async createConversation(
-    conversation: CreateConversationDTO
+    conversation: CreateConversationDTO,
+    userId: number
   ): Promise<Conversation> {
-    return this.prisma.conversation.create({
-      data: {
-        users: {
-          create: conversation.users.map((id) => ({
-            user: { connect: { id } }
-          }))
-        },
-        messages: {
-          create: {
-            type: conversation.message.type,
-            senderId: conversation.message.senderId,
-            content: conversation.message.content
-          }
-        }
-      },
-      select: selectConversation
+    const existingConversation = await this.prisma.conversation.findFirst({
+      where: {
+        AND: [
+          { users: { some: { userId: conversation.users[0] } } },
+          { users: { some: { userId: conversation.users[1] } } },
+          { isGroup: false }
+        ]
+      }
     });
+
+    const uniqueUsers = new Set([...conversation?.users, userId]);
+
+    const users = Array.from(uniqueUsers);
+
+    if (existingConversation) {
+      throw new HttpException(
+        'Conversation already exists',
+        HttpStatus.CONFLICT
+      );
+    } else {
+      return this.prisma.conversation.create({
+        data: {
+          users: {
+            create: users.map((id) => ({
+              user: { connect: { id } }
+            }))
+          },
+          isGroup: users?.length > 2,
+          messages: {
+            create: {
+              type: conversation.message.type,
+              senderId: userId,
+              content: conversation.message.content
+            }
+          }
+        },
+        select: selectConversation
+      });
+    }
   }
 
   async updateConversation(params: {

@@ -28,6 +28,7 @@ export const selectConversation = {
       updatedAt: true
     }
   },
+  isGroup: true,
   createdAt: true,
   updatedAt: true
 };
@@ -54,5 +55,9 @@ export const selectConversationWithLatestMessageOnly = {
       id: 'desc'
     },
     take: 1
-  }
+  },
+  isGroup: true,
+
+  createdAt: true,
+  updatedAt: true
 } as Prisma.ConversationSelect<DefaultArgs>;
