@@ -9,18 +9,19 @@ import Cookies from "js-cookie";
 export type AuthResponse = {
   accessToken: string;
   refreshToken: string;
+  userId: string;
 };
 
 export function useLogin() {
   const mutation = useMutation({
     mutationFn: client.auth.login,
     onSuccess: (data) => {
-      console.log("%cuser.ts line:165 data", "color: #26bfa5;", data);
       if (!data?.accessToken) {
         return;
       }
       Cookies.set("accessToken", data.accessToken);
       Cookies.set("refreshToken", data.refreshToken);
+      Cookies.set("userId", data.userId);
     },
     onError: (error: Error) => {
       console.log(error.message);

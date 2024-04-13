@@ -9,6 +9,8 @@ import {
 } from "../../types";
 import client from "../client/client";
 import { API_ENDPOINTS } from "../client/api_endpoints";
+import { addApiUrlAsPrefix, concatenateStrings } from "@/src/utils";
+import Cookies from "js-cookie";
 
 export interface IConversationQueryOptions extends QueryOptions {
   name: string;
@@ -21,14 +23,51 @@ export type TConversation = {
       firstName: string;
       lastName: string;
       id: number;
-      profilePicture: {
-        mimetype: string;
-        name: string;
-        size: number;
-        url: string;
-      };
+      profilePicture: TFile;
     };
   }>;
+  messages: TConversationMessage[];
+};
+
+export type TFormattedConversation = {
+  id: number;
+  users: Array<{
+    firstName: string;
+    lastName: string;
+    fullName: string;
+    id: number;
+    profilePicture: {
+      mimetype: string;
+      name: string;
+      size: number;
+      url: string;
+    };
+  }>;
+  messages: Array<{
+    id: string;
+    content: string;
+    previewMessage: string;
+    createdAt: string;
+    updatedAt: true;
+  }>;
+};
+
+export type TConversationMessage = {
+  content: string;
+  senderId: number;
+  id: string;
+  createdAt: string;
+  updatedAt: true;
+
+  files: TFile[];
+};
+
+export type TFile = {
+  createdAt?: string | Date;
+  mimetype: string;
+  name: string;
+  size: number;
+  url: string;
 };
 
 export function useGetConversations(
@@ -79,13 +118,9 @@ export function useGetConversations(
     fetchNextPage();
   }
 
-  console.log(
-    "%csrcdata-fetchingapiconversations.ts:71 data",
-    "color: green;",
-    data
-  );
   return {
-    data: data?.pages?.flatMap((page) => page.data) ?? [],
+    data:
+      data?.pages?.flatMap((page) => conversationsTransformer(page.data)) ?? [],
     isLoading,
     error,
     isFetching,
@@ -94,3 +129,48 @@ export function useGetConversations(
     hasMore: Boolean(hasNextPage),
   };
 }
+
+const conversationsTransformer = (
+  data: TConversation[]
+): TFormattedConversation[] => {
+  return data.map((conversation) => {
+    const formattedData = {
+      id: conversation.id,
+      users: conversation.users.map((user) => {
+        const fullName = concatenateStrings(
+          user?.user?.firstName,
+          user?.user?.lastName
+        );
+        return {
+          ...user.user,
+          fullName,
+          profilePicture: {
+            ...user.user?.profilePicture,
+            url: user.user?.profilePicture?.url
+              ? addApiUrlAsPrefix(user.user?.profilePicture?.url)
+              : `https://phantom-marca.unidadeditorial.es/72805d5a6a521774e2a199af5b1b90c3/crop/0x0/1916x1078/resize/828/f/jpg/assets/multimedia/imagenes/2022/04/07/16493398189245.jpg`,
+          },
+        };
+      }),
+
+      messages: conversation.messages.map((message) => {
+        const sentByMe = message.senderId?.toString() == Cookies.get("userId");
+
+        const previewMessage = sentByMe
+          ? concatenateStrings("You:", message.content)
+          : message.content;
+
+        const formattedMessage = {
+          id: message.id,
+          content: message.content,
+          previewMessage,
+          createdAt: message.createdAt,
+          updatedAt: message.updatedAt,
+        };
+
+        return formattedMessage;
+      }),
+    };
+    return formattedData;
+  });
+};

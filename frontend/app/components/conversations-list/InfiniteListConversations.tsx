@@ -1,12 +1,16 @@
-import { TConversation } from "@/src/data-fetching/api/conversations";
+import {
+  TConversation,
+  TFormattedConversation,
+} from "@/src/data-fetching/api/conversations";
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/shadcn/ui/avatar";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { format, formatDistance, intlFormatDistance } from "date-fns";
 
 const InfiniteListConversations = ({
   query,
 }: {
   query: {
-    data: TConversation[];
+    data: TFormattedConversation[];
     isLoading: boolean;
     error: unknown;
     isFetching: boolean;
@@ -25,7 +29,7 @@ const InfiniteListConversations = ({
       }
       className="flex text-primary-foreground flex-col  gap-2 pb-4 items-center"
     >
-      <div className="flex flex-col pt-2  gap-4 w-full ">
+      <div className="flex flex-col pt-2  gap-1 w-full ">
         {query?.data?.map((conversation) => {
           return (
             <ConversationItem
@@ -41,19 +45,19 @@ const InfiniteListConversations = ({
 
 export default InfiniteListConversations;
 
-function ConversationItem({ conversation }: { conversation: TConversation }) {
+function ConversationItem({
+  conversation,
+}: {
+  conversation: TFormattedConversation;
+}) {
   return (
-    <div
+    <button
       key={conversation.id}
-      className="p-2 text-sm  rounded flex gap-4 items-center flex-1 "
+      className="p-2 text-sm  rounded flex gap-2 items-center flex-1  hover:bg-black/20"
     >
-      <Avatar>
+      <Avatar className="h-14 w-14">
         <AvatarImage
-          src={
-            process.env.NEXT_PUBLIC_BACKEND_API +
-            "/" +
-            conversation?.users?.[0]?.user?.profilePicture?.url
-          }
+          src={conversation?.users?.[0]?.profilePicture?.url}
           className="object-cover"
         />
         <AvatarFallback className="text-primary">
@@ -61,8 +65,24 @@ function ConversationItem({ conversation }: { conversation: TConversation }) {
         </AvatarFallback>
       </Avatar>
 
-      {conversation?.users?.[0]?.user?.firstName +
-        conversation?.users?.[0]?.user?.lastName}
-    </div>
+      <div className="flex flex-col gap-1 items-start">
+        <span className="font-semibold">
+          {conversation?.users?.[0]?.fullName}
+        </span>
+        <span className=" text-xs flex gap-2">
+          {conversation?.messages?.[0]?.previewMessage}
+          <span className="text-gray-400">
+            {intlFormatDistance(
+              conversation?.messages?.[0]?.createdAt,
+              new Date(),
+              {
+                style: "narrow",
+                numeric: "always",
+              }
+            )?.replace(" ago", "")}
+          </span>
+        </span>
+      </div>
+    </button>
   );
 }

@@ -4,14 +4,14 @@ import ConversationsList from "./components/conversations-list/ConversationsList
 
 export default function Home() {
   return (
-    <main className="grid grid-cols-5 min-h-[100dvh] ">
-      <aside className="bg-gray-800">
+    <main className="grid grid-cols-5 min-h-[100dvh] bg-gray-800 ">
+      <aside>
         <ConversationsList />
       </aside>
 
-      <section className="col-span-3 bg-gray-500"></section>
+      <section className="col-span-3 border-x border-gray-700"></section>
 
-      <aside className="bg-gray-800"></aside>
+      <aside></aside>
     </main>
   );
 }
