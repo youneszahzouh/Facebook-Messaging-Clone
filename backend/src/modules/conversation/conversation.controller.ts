@@ -9,14 +9,14 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { Conversation } from '@prisma/client';
-import {
-  PaginatedOutputDto
-} from 'src/nestjs/decorators/api-paginated-response';
+import { PaginatedOutputDto } from 'src/nestjs/decorators/api-paginated-response';
 import { GetUser } from 'src/nestjs/decorators/get-user.decorator';
 import { JwtAuthGuard } from 'src/nestjs/guards/jwt-auth..guard';
 import { User } from '../user/user.model';
 import { ConversationService } from './conversation.service';
 import { CreateConversationDTO } from './dtos/create.dto';
+import { plainToInstance } from 'class-transformer';
+import { GetConversationDTO } from './dtos/get.dto';
 
 @Controller('conversations')
 export class ConversationController {
@@ -38,8 +38,10 @@ export class ConversationController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  async findOne(@Param('id') id: number): Promise<Conversation> {
-    return this.conversationService.findOne({ id });
+  async findOne(@Param('id') id: number): Promise<GetConversationDTO> {
+    const conversation = this.conversationService.findOne({ id });
+
+    return plainToInstance(GetConversationDTO, conversation);
   }
 
   @Post()

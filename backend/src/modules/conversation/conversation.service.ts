@@ -5,6 +5,10 @@ import { PaginatedOutputDto } from 'src/nestjs/decorators/api-paginated-response
 import { PrismaService } from 'src/prisma.service';
 import { userSelect } from '../user/user.model';
 import { CreateConversationDTO } from './dtos/create.dto';
+import {
+  selectConversation,
+  selectConversationWithLatestMessageOnly
+} from './dtos/get.dto';
 
 @Injectable()
 export class ConversationService {
@@ -14,7 +18,19 @@ export class ConversationService {
     conversationWhereUniqueInput: Prisma.ConversationWhereUniqueInput
   ): Promise<Conversation | null> {
     return this.prisma.conversation.findUnique({
-      where: conversationWhereUniqueInput
+      where: conversationWhereUniqueInput,
+
+      select: {
+        id: true,
+        users: {
+          select: {
+            user: {
+              select: userSelect
+            }
+          }
+        },
+        messages: true
+      }
     });
   }
 
@@ -33,22 +49,8 @@ export class ConversationService {
         where: {
           users: { some: { userId } }
         },
-        select: {
-          id: true,
-          users: {
-            select: {
-              user: {
-                select: userSelect
-              }
-            }
-          },
-          messages: {
-            select: {
-              content: true,
-              id: true
-            }
-          }
-        }
+
+        select: selectConversationWithLatestMessageOnly
       },
       { page: queryParams.page }
     );
@@ -63,8 +65,14 @@ export class ConversationService {
           create: conversation.users.map((id) => ({
             user: { connect: { id } }
           }))
+        },
+        messages: {
+          create: {
+            content: conversation.message
+          }
         }
-      }
+      },
+      select: selectConversation
     });
   }
 
