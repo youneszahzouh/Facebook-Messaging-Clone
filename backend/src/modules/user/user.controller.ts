@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   UploadedFiles,
+  UseGuards,
   UseInterceptors
 } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
@@ -15,22 +16,32 @@ import { FileDataMapper } from 'src/nestjs/mappers/file-mapper';
 import { CreateUserDTO } from './dtos/create.dto';
 import { UserService } from './user.service';
 import { UpdateUserDTO } from './dtos/update.dto';
+import { JwtAuthGuard } from 'src/nestjs/guards/jwt-auth..guard';
+import { GetUser } from 'src/nestjs/decorators/get-user.decorator';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  async findAll(): Promise<User[]> {
+  @UseGuards(JwtAuthGuard)
+  async findAll(@GetUser() user: User): Promise<Partial<User>[]> {
+    console.log(
+      '%csrcmodules.controller.ts:30 user',
+      'color: #26bfa5;',
+      user
+    );
     return this.userService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: number): Promise<User> {
     return this.userService.findOne({ id });
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(
     FileUploader({
       uploadFields: [{ name: 'profilePicture' }],
@@ -47,16 +58,11 @@ export class UserController {
       ) as Prisma.FileCreateNestedOneWithoutUserInput;
     }
 
-    console.log(
-      '%csrcmodules.controller.ts:45 user.profilePicture',
-      'color: #007acc;',
-      user.profilePicture
-    );
-
     return this.userService.createUser(user);
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   async update(
     @Param('id') id: number,
     @Body() user: UpdateUserDTO
@@ -65,6 +71,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   async deleteUser(@Param('id') id: number): Promise<User> {
     return this.userService.deleteUser({ id });
   }

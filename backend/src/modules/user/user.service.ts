@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { User, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { FileModel } from '../file/file.model';
+import { userSelect } from './user.model';
 
 @Injectable()
 export class UserService {
@@ -15,11 +16,17 @@ export class UserService {
     });
   }
 
-  async findAll(): Promise<User[]> {
+  async findBy(
+    userWhereInput: Prisma.UserWhereInput
+  ): Promise<User | null> {
+    return this.prisma.user.findFirst({
+      where: userWhereInput
+    });
+  }
+
+  async findAll(): Promise<Partial<User>[]> {
     return this.prisma.user.findMany({
-      include: {
-        profilePicture: true
-      }
+      select: userSelect
     });
   }
 
