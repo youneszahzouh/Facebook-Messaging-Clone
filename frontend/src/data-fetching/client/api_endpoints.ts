@@ -1,3 +1,4 @@
 export const API_ENDPOINTS = {
-  CONVERSATIONS: "/api/conversations/byUser/1",
+  CONVERSATIONS: "/api/conversations",
+  USERS_LOGIN: "/api/auth/login",
 };

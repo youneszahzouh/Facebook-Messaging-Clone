@@ -47,9 +47,10 @@ export class ConversationController {
   @Post()
   @UseGuards(JwtAuthGuard)
   async create(
-    @Body() conversation: CreateConversationDTO
+    @Body() conversation: CreateConversationDTO,
+    @GetUser() user: User
   ): Promise<Conversation> {
-    return this.conversationService.createConversation(conversation);
+    return this.conversationService.createConversation(conversation, user.id);
   }
 
   // @Put(':id')

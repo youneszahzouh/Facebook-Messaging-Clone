@@ -2,8 +2,8 @@ import { API_ENDPOINTS } from "@/src/data-fetching/client/api_endpoints";
 import useServerFetching from "@/src/hooks/useServerSideFetching";
 import { QueryKey } from "@tanstack/react-query";
 import ConversationsListClientSide from "./ConversationsListClientSide";
-import { getFullApiPath } from "@/src/utils/getFullApiPath";
 import { convertObjectToStringRecord } from "@/src/utils/convertObjectToStringRecord";
+import { getFullApiPath } from "@/src/utils";
 
 async function getConversations({ queryKey }: { queryKey: QueryKey }) {
   "use server";
@@ -23,7 +23,7 @@ async function getConversations({ queryKey }: { queryKey: QueryKey }) {
 }
 
 const ConversationsList = async () => {
-  const defaultParams = {  };
+  const defaultParams = {};
 
   const { ServerComponent } = await useServerFetching({
     endpoint: API_ENDPOINTS.CONVERSATIONS,
