@@ -4,6 +4,8 @@ export class User implements Prisma.UserCreateInput {
   id: number;
   firstName: string;
   lastName: string;
+  password: string;
+  email: string;
   profilePicture?: Prisma.FileCreateNestedOneWithoutUserInput;
 }
 

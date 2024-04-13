@@ -8,7 +8,13 @@ export class CreateUserDTO {
   @IsNotEmpty()
   lastName: string;
 
+  @IsNotEmpty()
+  email: string;
+
+  @IsNotEmpty()
+  password: string;
+
   @IsOptional()
   @ValidateNested()
-  profilePicture : Prisma.FileCreateNestedOneWithoutUserInput
+  profilePicture: Prisma.FileCreateNestedOneWithoutUserInput;
 }

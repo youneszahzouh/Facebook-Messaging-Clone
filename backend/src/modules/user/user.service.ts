@@ -16,6 +16,14 @@ export class UserService {
     });
   }
 
+  async findBy(
+    userWhereInput: Prisma.UserWhereInput
+  ): Promise<User | null> {
+    return this.prisma.user.findFirst({
+      where: userWhereInput
+    });
+  }
+
   async findAll(): Promise<Partial<User>[]> {
     return this.prisma.user.findMany({
       select: userSelect
