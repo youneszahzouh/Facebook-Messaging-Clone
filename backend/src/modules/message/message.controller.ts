@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards
+} from '@nestjs/common';
 import { Message } from '@prisma/client';
 import { CreateMessageDTO } from './dtos/create.dto';
 import { MessageService } from './message.service';
@@ -23,11 +31,6 @@ export class MessageController {
   @Post()
   @UseGuards(JwtAuthGuard)
   async create(@Body() message: CreateMessageDTO): Promise<Message> {
-    console.log(
-      '%csrcmodulesmessagemessage.controller.ts:25 message',
-      'color: #26bfa5;',
-      message
-    );
     return this.messageService.createMessage(message);
   }
 

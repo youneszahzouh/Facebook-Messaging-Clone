@@ -1,6 +1,11 @@
-import { Prisma } from '@prisma/client';
+import { $Enums, Prisma } from '@prisma/client';
 
-export class Conversation implements Prisma.ConversationCreateInput {
-  users?: Prisma.UsersOnConversationsCreateNestedManyWithoutConversationInput;
-  messages?: Prisma.MessageCreateNestedManyWithoutConversationInput;
+export class Message implements Prisma.MessageCreateWithoutConversationInput {
+  content?: string;
+  files?: Prisma.FileCreateNestedManyWithoutMessageInput;
+  senderId: number;
+  type: $Enums.MessageType;
+  conversationId: number;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
 }

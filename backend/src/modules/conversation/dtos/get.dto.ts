@@ -21,9 +21,15 @@ export const selectConversation = {
   messages: {
     select: {
       content: true,
-      id: true
+      senderId: true,
+      files: true,
+      id: true,
+      createdAt: true,
+      updatedAt: true
     }
-  }
+  },
+  createdAt: true,
+  updatedAt: true
 };
 
 export const selectConversationWithLatestMessageOnly = {
@@ -36,6 +42,14 @@ export const selectConversationWithLatestMessageOnly = {
     }
   },
   messages: {
+    select: {
+      content: true,
+      senderId: true,
+      files: true,
+      id: true,
+      createdAt: true,
+      updatedAt: true
+    },
     orderBy: {
       id: 'desc'
     },
