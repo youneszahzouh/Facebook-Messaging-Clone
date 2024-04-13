@@ -12,15 +12,19 @@ import {
   LoginDefaultValues,
   loginCredentialsSchema,
 } from "./validators";
+import { useLogin } from "@/src/data-fetching/api/auth";
 
 const Login = () => {
+  const mutation = useLogin();
+
   const form = useForm({
     resolver: zodResolver(loginCredentialsSchema),
     defaultValues: LoginDefaultValues,
   });
 
   const onSubmit = (values: LoginCredentialsType) => {
-    console.log("login:", values);
+    const data = mutation.mutate(values);
+    console.log("login:", data);
   };
 
   return (

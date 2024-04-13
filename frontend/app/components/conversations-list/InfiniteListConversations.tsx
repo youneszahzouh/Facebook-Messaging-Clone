@@ -52,7 +52,7 @@ function ConversationItem({ conversation }: { conversation: TConversation }) {
           src={
             process.env.NEXT_PUBLIC_BACKEND_API +
             "/" +
-            conversation?.users?.[0]?.user?.profilePicture.url
+            conversation?.users?.[0]?.user?.profilePicture?.url
           }
           className="object-cover"
         />
