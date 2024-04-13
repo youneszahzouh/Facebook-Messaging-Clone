@@ -17,7 +17,6 @@ import { CreateUserDTO } from './dtos/create.dto';
 import { UserService } from './user.service';
 import { UpdateUserDTO } from './dtos/update.dto';
 import { JwtAuthGuard } from 'src/nestjs/guards/jwt-auth..guard';
-import { GetUser } from 'src/nestjs/decorators/get-user.decorator';
 
 @Controller('users')
 export class UserController {
@@ -25,12 +24,7 @@ export class UserController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async findAll(@GetUser() user: User): Promise<Partial<User>[]> {
-    console.log(
-      '%csrcmodules.controller.ts:30 user',
-      'color: #26bfa5;',
-      user
-    );
+  async findAll(): Promise<Partial<User>[]> {
     return this.userService.findAll();
   }
 

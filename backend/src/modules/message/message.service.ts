@@ -22,6 +22,8 @@ export class MessageService {
   async createMessage(message: CreateMessageDTO): Promise<Message> {
     return this.prisma.message.create({
       data: {
+        type: message.type,
+        senderId: message.senderId,
         content: message.content,
         conversation: {
           connect: { id: message.conversationId }

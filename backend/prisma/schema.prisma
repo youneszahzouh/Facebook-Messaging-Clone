@@ -19,11 +19,12 @@ model User {
   lastName         String
   email            String
   password         String
-  createdAt        DateTime               @default(now())
-  updatedAt        DateTime               @updatedAt
   profilePicture   File?                  @relation(fields: [profilePictureId], references: [id])
   profilePictureId Int?
   conversations    UsersOnConversations[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model File {
@@ -34,7 +35,9 @@ model File {
   size      Int
   createdAt DateTime @default(now())
 
-  User User[]
+  User      User[]
+  Message   Message? @relation(fields: [messageId], references: [id])
+  messageId Int?
 }
 
 model Conversation {
@@ -42,6 +45,9 @@ model Conversation {
 
   users    UsersOnConversations[]
   messages Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model UsersOnConversations {
@@ -56,7 +62,21 @@ model UsersOnConversations {
 model Message {
   id Int @id @default(autoincrement())
 
-  content        String
+  type MessageType
+
+  content String?
+  files   File[]
+
   conversation   Conversation @relation(fields: [conversationId], references: [id])
   conversationId Int
+  senderId       Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
 }

@@ -3,7 +3,6 @@ import { Conversation, Prisma } from '@prisma/client';
 import { createPaginator } from 'prisma-pagination';
 import { PaginatedOutputDto } from 'src/nestjs/decorators/api-paginated-response';
 import { PrismaService } from 'src/prisma.service';
-import { userSelect } from '../user/user.model';
 import { CreateConversationDTO } from './dtos/create.dto';
 import {
   selectConversation,
@@ -20,17 +19,7 @@ export class ConversationService {
     return this.prisma.conversation.findUnique({
       where: conversationWhereUniqueInput,
 
-      select: {
-        id: true,
-        users: {
-          select: {
-            user: {
-              select: userSelect
-            }
-          }
-        },
-        messages: true
-      }
+      select: selectConversation
     });
   }
 
@@ -68,7 +57,9 @@ export class ConversationService {
         },
         messages: {
           create: {
-            content: conversation.message
+            type: conversation.message.type,
+            senderId: conversation.message.senderId,
+            content: conversation.message.content
           }
         }
       },
