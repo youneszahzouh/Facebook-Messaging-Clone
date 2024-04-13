@@ -23,6 +23,9 @@ import { Exclude, Expose } from 'class-transformer';
 @Exclude()
 export class RegisterResponseDto {
   @Expose()
+  id: string;
+
+  @Expose()
   firstName: string;
 
   @Expose()

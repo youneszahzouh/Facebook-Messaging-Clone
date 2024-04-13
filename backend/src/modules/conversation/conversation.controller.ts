@@ -9,14 +9,14 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { Conversation } from '@prisma/client';
-import { ConversationService } from './conversation.service';
-import { CreateConversationDTO } from './dtos/create.dto';
 import {
-  ApiPaginatedResponse,
   PaginatedOutputDto
 } from 'src/nestjs/decorators/api-paginated-response';
-import { GetConversationDTO } from './dtos/get.dto';
+import { GetUser } from 'src/nestjs/decorators/get-user.decorator';
 import { JwtAuthGuard } from 'src/nestjs/guards/jwt-auth..guard';
+import { User } from '../user/user.model';
+import { ConversationService } from './conversation.service';
+import { CreateConversationDTO } from './dtos/create.dto';
 
 @Controller('conversations')
 export class ConversationController {
@@ -24,29 +24,22 @@ export class ConversationController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async findAll(): Promise<Conversation[]> {
-    return this.conversationService.findAll();
+  async findAll(
+    @GetUser() user: User,
+
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10
+  ): Promise<PaginatedOutputDto<Conversation>> {
+    return this.conversationService.findAll(user.id, {
+      page: page,
+      limit: limit
+    });
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: number): Promise<Conversation> {
     return this.conversationService.findOne({ id });
-  }
-
-  @Get('byUser/:id')
-  @UseGuards(JwtAuthGuard)
-  @ApiPaginatedResponse(GetConversationDTO) // Substitua CategoryDto pelo seu DTO de saída
-  async findByUser(
-    @Param('id') userId: number,
-
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10
-  ): Promise<PaginatedOutputDto<Conversation>> {
-    return this.conversationService.findByUser(userId, {
-      page: page,
-      limit: limit
-    });
   }
 
   @Post()
