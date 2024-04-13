@@ -5,7 +5,8 @@ import {
   Get,
   Param,
   Post,
-  Query
+  Query,
+  UseGuards
 } from '@nestjs/common';
 import { Conversation } from '@prisma/client';
 import { ConversationService } from './conversation.service';
@@ -15,22 +16,26 @@ import {
   PaginatedOutputDto
 } from 'src/nestjs/decorators/api-paginated-response';
 import { GetConversationDTO } from './dtos/get.dto';
+import { JwtAuthGuard } from 'src/nestjs/guards/jwt-auth..guard';
 
 @Controller('conversations')
 export class ConversationController {
   constructor(private readonly conversationService: ConversationService) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async findAll(): Promise<Conversation[]> {
     return this.conversationService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: number): Promise<Conversation> {
     return this.conversationService.findOne({ id });
   }
 
   @Get('byUser/:id')
+  @UseGuards(JwtAuthGuard)
   @ApiPaginatedResponse(GetConversationDTO) // Substitua CategoryDto pelo seu DTO de saída
   async findByUser(
     @Param('id') userId: number,
@@ -45,6 +50,7 @@ export class ConversationController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async create(
     @Body() conversation: CreateConversationDTO
   ): Promise<Conversation> {
@@ -60,6 +66,7 @@ export class ConversationController {
   // }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   async deleteConversation(@Param('id') id: number): Promise<Conversation> {
     return this.conversationService.deleteConversation({ id });
   }

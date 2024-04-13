@@ -1,23 +1,27 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { Message } from '@prisma/client';
 import { CreateMessageDTO } from './dtos/create.dto';
 import { MessageService } from './message.service';
+import { JwtAuthGuard } from 'src/nestjs/guards/jwt-auth..guard';
 
 @Controller('messages')
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async findAll(): Promise<Message[]> {
     return this.messageService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: number): Promise<Message> {
     return this.messageService.findOne({ id });
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async create(@Body() message: CreateMessageDTO): Promise<Message> {
     console.log(
       '%csrcmodulesmessagemessage.controller.ts:25 message',
@@ -36,6 +40,7 @@ export class MessageController {
   // }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   async deleteMessage(@Param('id') id: number): Promise<Message> {
     return this.messageService.deleteMessage({ id });
   }
