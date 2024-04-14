@@ -38,8 +38,11 @@ export class ConversationController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  async findOne(@Param('id') id: number): Promise<GetConversationDTO> {
-    const conversation = this.conversationService.findOne({ id });
+  async findOne(
+    @Param('id') id: number,
+    @GetUser() user: User
+  ): Promise<GetConversationDTO> {
+    const conversation = this.conversationService.findOne({ id }, user.id);
 
     return plainToInstance(GetConversationDTO, conversation);
   }

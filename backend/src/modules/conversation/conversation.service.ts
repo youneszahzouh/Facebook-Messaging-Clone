@@ -14,11 +14,12 @@ export class ConversationService {
   constructor(private prisma: PrismaService) {}
 
   async findOne(
-    conversationWhereUniqueInput: Prisma.ConversationWhereUniqueInput
+    conversationWhereUniqueInput: Prisma.ConversationWhereUniqueInput,
+    userId: number
   ): Promise<Conversation | null> {
     return this.prisma.conversation.findUnique({
       where: conversationWhereUniqueInput,
-      select: selectConversation
+      select: selectConversation(userId)
     });
   }
 
@@ -31,17 +32,27 @@ export class ConversationService {
   ): Promise<PaginatedOutputDto<Conversation>> {
     const paginate = createPaginator({ perPage: queryParams.limit });
 
-    return paginate<Conversation, Prisma.ConversationFindManyArgs>(
+    const paginated = await paginate<
+      Conversation,
+      Prisma.ConversationFindManyArgs
+    >(
       this.prisma.conversation,
       {
         where: {
           users: { some: { userId } }
         },
 
-        select: selectConversationWithLatestMessageOnly
+        select: selectConversationWithLatestMessageOnly(userId)
       },
       { page: queryParams.page }
     );
+
+    console.log(
+      '%csrcmodulesconversationconversation.service.ts:46 paginated',
+      'color: #26bfa5;',
+      paginated
+    );
+    return paginated;
   }
 
   async createConversation(
@@ -84,7 +95,7 @@ export class ConversationService {
             }
           }
         },
-        select: selectConversation
+        select: selectConversation(userId)
       });
     }
   }
