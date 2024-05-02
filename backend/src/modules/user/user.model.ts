@@ -13,6 +13,7 @@ export const userSelect = {
   firstName: true,
   lastName: true,
   id: true,
+  email: true,
   profilePictureId: false,
   profilePicture: {
     select: {
